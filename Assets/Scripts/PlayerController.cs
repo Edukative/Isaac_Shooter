@@ -40,9 +40,9 @@ public class PlayerController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        
+
     }
-    void FixedUpdate ()
+    void FixedUpdate()
     {
         // rotate the camera to look
         float mouse_x = Input.GetAxis("Mouse X") * mouseXSensibility * Time.fixedDeltaTime;
@@ -67,8 +67,8 @@ public class PlayerController : MonoBehaviour {
         myCamera.transform.Rotate(mouse_y, 0, 0);
 
         // movement of the character
-        float dir_z = Input.GetAxis("Vertical");
-        float dir_x = Input.GetAxis("Horizontal");
+        float dir_z = Input.GetAxis("Horizontal");
+        float dir_x = Input.GetAxis("Vertical");
 
         // press Shift to run
         float runMultiplayer = (Input.GetAxis("Run") > 0) ? 2.0f : 1.0f; // same as the if below
@@ -82,8 +82,16 @@ public class PlayerController : MonoBehaviour {
         if ((Input.GetAxis("Jump") > 0) && (isGrounded))
         {
             rigidBody.AddForce(Vector3.up * jumpforce, ForceMode.Impulse);
-        }
+        } }
 
         // manual gravity
-    }
-}
+
+        // above the start function
+        // stats
+        public bool isDead;
+        public int health;
+        public int shield;
+        public int ammo;
+        public int savedAmmo;
+    }   public bool hasKey = false; // to open a door
+} 
