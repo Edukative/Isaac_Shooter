@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class Resources : MonoBehaviour
 
-    PlayerController stats;
 {
+    PlayerController stats;
+
     // Use this for initialization
     void Start()
     {
-        stats = GameObject.Find("Player").GetComponent<PlayerController>();
+        stats = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
     }
 
     // Update is called once per frame

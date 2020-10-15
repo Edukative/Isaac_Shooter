@@ -31,6 +31,15 @@ public class PlayerController : MonoBehaviour {
 
     private Rigidbody rigidBody;
 
+    // above the start function
+    // stats
+    public bool isDead;
+    public int health;
+    public int shield;
+    public int ammo;
+    public int savedAmmo;
+    public bool hasKey = false; // to open a door
+
     // Start is called before the first frame update
     void Start()
     {
@@ -67,31 +76,50 @@ public class PlayerController : MonoBehaviour {
         myCamera.transform.Rotate(mouse_y, 0, 0);
 
         // movement of the character
-        float dir_z = Input.GetAxis("Horizontal");
-        float dir_x = Input.GetAxis("Vertical");
+        float dir_z = Input.GetAxis("Vertical");
+        float dir_x = Input.GetAxis("Horizontal");
 
         // press Shift to run
         float runMultiplayer = (Input.GetAxis("Run") > 0) ? 2.0f : 1.0f; // same as the if below
 
         direction.x = dir_x * walkingSpeed * runMultiplayer * Time.deltaTime;
         direction.z = dir_z * walkingSpeed * runMultiplayer * Time.deltaTime;
+        direction.y = -gravity * gravityForce;
 
         player.Move(direction);
 
         // press Space to jump
         if ((Input.GetAxis("Jump") > 0) && (isGrounded))
         {
-            rigidBody.AddForce(Vector3.up * jumpforce, ForceMode.Impulse);
-        } }
+            direction.y = jumpforce;
+            if (jumpforce > 0.0f)
+            {
+                rigidBody.AddForce(Vector3.up * jumpforce, ForceMode.Impulse);
+            }
+            
+        }
+
+        // detects if is touching the ground
+        isGrounded = player.isGrounded;
 
         // manual gravity
+        if (!isGrounded)
+        {
+            direction.y -= gravity * gravityForce * Time.deltaTime;
+        }
 
-        // above the start function
-        // stats
-        public bool isDead;
-        public int health;
-        public int shield;
-        public int ammo;
-        public int savedAmmo;
-    }   public bool hasKey = false; // to open a door
+        // recover the control of the mouse when pressing esc
+        if (Input.GetAxis("Cancel") > 0)
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
+
+        // lock the mouse again when pressing left click
+        if (Input.GetMouseButtonDown(0))
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+    }
+
+        
 } 
