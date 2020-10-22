@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviour {
 
     public Camera myCamera;
 
+    public float cameraAngleY;
+
     public float mouseXSensibility = 1.0f;
     public float mouseYSensibility = 1.0f;
 
@@ -53,15 +55,16 @@ public class PlayerController : MonoBehaviour {
     }
     void FixedUpdate()
     {
+
+        // movement of the character
+        float dir_x = Input.GetAxis("Horizontal");
+        float dir_z = Input.GetAxis("Vertical");
+
         // rotate the camera to look
-        float mouse_x = Input.GetAxis("Mouse X") * mouseXSensibility * Time.fixedDeltaTime;
-        float mouse_y = Input.GetAxis("Mouse Y") * mouseYSensibility * Time.fixedDeltaTime;
+        float mouse_x = Input.GetAxis("Mouse X");
+        float mouse_y = Input.GetAxis("Mouse Y");
 
-        mouse_y = Mathf.Clamp(mouse_y, botAngleY, topAngleY);
-
-        // invert if activated the invert part
-        mouse_y = invertY ? mouse_y * -1 : mouse_y * 1;
-
+        int invert = invertY ? -1 : 1;
         /*
         if (invertY)
         {
@@ -72,19 +75,25 @@ public class PlayerController : MonoBehaviour {
             mouse_y = mouse_y * 1;
         }*/
 
-        transform.Rotate(0, mouse_x, 0);
-        myCamera.transform.Rotate(mouse_y, 0, 0);
+        cameraAngleY += mouse_y * mouseYSensibility * invert;
+        cameraAngleY = Mathf.Clamp(cameraAngleY, botAngleY, topAngleY);
 
-        // movement of the character
-        float dir_z = Input.GetAxis("Vertical");
-        float dir_x = Input.GetAxis("Horizontal");
+        Quaternion angle_mouseX = Quaternion.Euler(0.0f, mouse_x * mouseXSensibility, 0.0f);
+        Quaternion angle_mouseY = Quaternion.Euler(cameraAngleY, 0.0f, 0.0f);
+
+        transform.localRotation *= angle_mouseX; // it rotates the player only
+        myCamera.transform.localRotation = angle_mouseY; // only rotates the camera
+
+        // player controls
 
         // press Shift to run
         float runMultiplayer = (Input.GetAxis("Run") > 0) ? 2.0f : 1.0f; // same as the if below
 
-        direction.x = dir_x * walkingSpeed * runMultiplayer * Time.deltaTime;
-        direction.z = dir_z * walkingSpeed * runMultiplayer * Time.deltaTime;
+        direction.x = dir_x * walkingSpeed * runMultiplayer;
+        direction.z = dir_z * walkingSpeed * runMultiplayer;
         direction.y = -gravity * gravityForce;
+
+        direction = Quaternion.FromToRotation(Vector3.forward, transform.forward) * direction;
 
         player.Move(direction);
 
