@@ -42,10 +42,14 @@ public class PlayerController : MonoBehaviour {
     public int savedAmmo;
     public bool hasKey = false; // to open a door
 
+    Shooter shooter;
+
     // Start is called before the first frame update
     void Start()
     {
+        cameraAngleY = 0;
         rigidBody = GetComponent<Rigidbody>();
+        shooter = this.GetComponent<Shooter>();
     }
 
     // Update is called once per frame
@@ -91,7 +95,6 @@ public class PlayerController : MonoBehaviour {
 
         direction.x = dir_x * walkingSpeed * runMultiplayer;
         direction.z = dir_z * walkingSpeed * runMultiplayer;
-        direction.y = -gravity * gravityForce;
 
         direction = Quaternion.FromToRotation(Vector3.forward, transform.forward) * direction;
 
